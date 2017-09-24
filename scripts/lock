@@ -1,0 +1,13 @@
+#!/bin/bash
+# Slow but very nice lock blur for i3lock
+#
+# Author: Synergiance
+
+SCROTDIR=/tmp
+SCROTNAM=sspre.png
+SCROTLCK=sslck.png
+
+/usr/bin/import -window root ${SCROTDIR}/${SCROTNAM}
+convert ${SCROTDIR}/${SCROTNAM} -blur 0x10 ${SCROTDIR}/${SCROTLCK}
+i3lock -i ${SCROTDIR}/${SCROTLCK}
+rm ${SCROTDIR}/${SCROTNAM} ${SCROTDIR}/${SCROTLCK}

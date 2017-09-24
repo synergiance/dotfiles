@@ -1,0 +1,12 @@
+#!/bin/sh
+# Advances your i3 wallpaper with krawall
+# Make sure krawall is in your path, or point to it with bin
+#
+# Author: Synergiance
+
+bin=$(which krawall)
+opts="--rescan --resort --next --i3"
+
+echo "$bin $opts"
+$bin $opts
+echo "Wallpaper changed!"

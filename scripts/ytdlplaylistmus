@@ -1,0 +1,38 @@
+#!/bin/bash
+# Downloads a youtube playlist and keeps it in sync
+# Please use a list URL rather than a video from said playlist
+# Options are configurable
+#
+# Author: Synergiance
+
+url="https://www.youtube.com/playlist?list=PL7tPIoWoeE1mBgi-KUwbtkYwLRFG5inDS"
+dir=$HOME/Music/yt
+archive="$HOME/.ytdl/archive01.txt"
+opts="--yes-playlist -f mp3/bestaudio --download-archive $archive"
+bin=$(which youtube-dl)
+ext=webm
+opt="-acodec libmp3lame -ab 192k -hide_banner -n"
+next=mp3
+
+if [[ $? -eq 1 ]]
+then
+	echo "Could not find youtube-dl"
+	exit 1
+fi
+
+cd $dir
+echo "$bin $opts \"$url\""
+$bin $opts "$url"
+
+for f in $dir/*.$ext
+do
+	echo "Processing $f..."
+	nf=${f%.*}
+	ffmpeg -i "$f" $opt "$nf.$next"
+	id3tag -aNightcore -AYouTube -gNightcore "$nf.$next"
+	id3tag --song="$nf" "$nf.$next"
+done
+
+rm *.$ext
+
+/usr/bin/mpc update

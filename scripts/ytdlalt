@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+#   Filename: ytdl
+# Created on: 10 Mar 2017
+#     Author: Synergiance
+
+#OPT="--write-thumbnail --no-call-home --no-progress"
+OPT="--embed-thumbnail --no-call-home"
+FORMAT="-f bestvideo+bestaudio"
+#OUTPUT="-o %(title)s-%(id)s.%(format_id)s.%(ext)s"
+OUTPUT=""
+DIR=$HOME/Videos/YouTube
+#DIR=$HOME/tmp
+BIN=$(which youtube-dl)
+
+if [[ $? -eq 1 ]]
+then
+    echo "Could not find YouTube Downloader"
+    exit 1
+fi
+
+echo "Moving into directory: $DIR"
+cd $DIR
+$BIN $FORMAT $OUTPUT $OPT $1
+
+exit 0

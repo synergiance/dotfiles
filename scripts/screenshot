@@ -1,0 +1,16 @@
+#!/bin/bash
+# Save a screenshot with a timestamp using import
+#
+# Author: Synergiance
+
+SCROTDIR=${HOME}/screenshots
+SCROTPRE=screenshot
+BIN=$(which import)
+
+if [ ! -d ${SCROTDIR} ]
+then
+	mkdir -p ${SCROTDIR}
+fi
+$BIN -window root ${SCROTDIR}/${SCROTPRE}-$(date '+%Y-%m-%d-%T').png
+echo "Screenshot saved as ${SCROTDIR}/${SCROTPRE}-$(date '+%Y-%m-%d-%T').png"
+exit 0

@@ -1,0 +1,15 @@
+#!/bin/sh
+# Changes wallpapers every 5 minutes with krawall.
+# Please make sure that krawall is in your path.
+# Duration can be edited
+#
+# Author: Synergiance
+
+bin=$(which krawall)
+opts="--rescan --resort --next --i3"
+
+while true
+do
+    sleep 600
+    $bin $opts
+done
