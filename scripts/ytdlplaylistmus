@@ -7,6 +7,7 @@
 
 url="https://www.youtube.com/playlist?list=PL7tPIoWoeE1mBgi-KUwbtkYwLRFG5inDS"
 dir=$HOME/Music/yt
+#cachedir=$HOME/.ytdl/cache
 archive="$HOME/.ytdl/archive01.txt"
 opts="--yes-playlist -f mp3/bestaudio --download-archive $archive"
 bin=$(which youtube-dl)
@@ -20,17 +21,35 @@ then
 	exit 1
 fi
 
+#if [[ ! -d $cachedir ]]
+#then
+#    mkdir -p $cachedir
+#fi
+if [[ ! -d $dir ]]
+then
+    mkdir -p $dir
+fi
+
+# cd $cachedir
 cd $dir
 echo "$bin $opts \"$url\""
 $bin $opts "$url"
+
+ffbin=$(which ffmpeg)
+id3bin=$(which id3tag)
+
+#for f in $cachedir/*
+#do
+#    stuff
+#done
 
 for f in $dir/*.$ext
 do
 	echo "Processing $f..."
 	nf=${f%.*}
-	ffmpeg -i "$f" $opt "$nf.$next"
-	id3tag -aNightcore -AYouTube -gNightcore "$nf.$next"
-	id3tag --song="$nf" "$nf.$next"
+	$ffbin -i "$f" $opt "$nf.$next"
+	$id3bin -aNightcore -AYouTube -gNightcore "$nf.$next"
+	$id3bin --song="$nf" "$nf.$next"
 done
 
 rm *.$ext
