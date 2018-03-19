@@ -7,6 +7,10 @@ SCROTDIR=${HOME}/screenshots
 SCROTPRE=screenshot
 BIN=$(which import)
 
+if [ $? -eq 1 ] then
+    echo "ERROR: Could not find import"
+    exit 1
+fi
 if [ ! -d ${SCROTDIR} ]
 then
 	mkdir -p ${SCROTDIR}
