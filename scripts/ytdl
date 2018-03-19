@@ -6,7 +6,7 @@
 
 #OPT="--write-thumbnail --no-call-home --no-progress"
 OPT="--embed-thumbnail --no-call-home"
-FORMAT="-f bestvideo[ext=webm]+bestaudio[ext=webm]"
+FORMAT="-f bestvideo[ext=webm][filesize<=300M][height>=1080]+bestaudio[ext=webm]/bestvideo[ext=webm][height<=720]+bestaudio[ext=webm][filesize<=600M]/bestvideo[ext=webm][height<=480]+bestaudio[ext=webm]/bestvideo+bestaudio/best"
 #OUTPUT="-o %(title)s-%(id)s.%(format_id)s.%(ext)s"
 OUTPUT=""
 DIR=$HOME/Videos/YouTube
