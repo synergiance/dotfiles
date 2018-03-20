@@ -1,0 +1,12 @@
+#!/bin/bash
+
+bin=$(which avconv)
+if [[ $? -eq 1 ]]; then
+    bin=$(which ffmpeg)
+    if [[ $? -eq 1 ]]; then
+        echo "ERROR: ffmpeg was not found on your system. exiting."
+        exit 1
+    fi
+fi
+
+$bin -i "$1" -acodec libvorbis -aq 5 -ac 2 -qmax 25 -threads 2 "${1%.mp4}.webm"
