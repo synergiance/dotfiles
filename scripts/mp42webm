@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+#   Filename: mp42webm
+#     Author: Synergiance
+# Created On: 20 March 2018
+#
+# Easy way to use ffmpeg to convert to free codecs, without sacrificing
+# quality.  You can type the command yourself really but I'm lazy and can't
+# remember my commands well.  If you use this, please enjoy and make good
+# use of it.
 
 bin=$(which avconv)
 if [[ $? -eq 1 ]]; then
