@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+#   Filename: httpserver
+#     Author: Synergiance
+# Created On: 16 March 2018
+#
+#   Starts the python internal web server
+
+BIN=$(which python2)
+
+if [[ $? -eq 1 ]]
+then
+    echo "Could not find Python 2"
+    exit 1
+fi
+
+$BIN -mSimpleHTTPServer 8080
