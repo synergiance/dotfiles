@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+#   Filename: mp42mp3wav
+#     Author: Synergiance
+# Created On: 14 March 2019
+#
+# Easy way to use ffmpeg to convert video files into mmd and unity compatible
+# audio files.
+#
+
+bin=$(which avconv)
+if [[ $? -eq 1 ]]; then
+    bin=$(which ffmpeg)
+    if [[ $? -eq 1 ]]; then
+        echo "ERROR: ffmpeg was not found on your system. exiting."
+        exit 1
+    fi
+fi
+
+oext="${1##*.}"
+filebase="${1%.$oext}"
+check=0
+
+if [[ $oext == "mp4" || $oext == "avi" || $oext == "webm" || $oext == "flv" ]]
+then
+    check=1
+fi
+
+if [[ $check == 0 ]]
+then
+    echo "Not a recognized video extension, exiting."
+    exit 1
+fi
+
+$bin -i "$1" -vn "$filebase.wav" -vn -acodec libmp3lame "$filebase.mp3"

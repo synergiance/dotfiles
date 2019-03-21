@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+#   Filename: mp42webm
+#     Author: Synergiance
+# Created On: 21 March 2019
+#
+# Generates a waveform video fit for Unity
+
+bin=$(which avconv)
+if [[ $? -eq 1 ]]; then
+    bin=$(which ffmpeg)
+    if [[ $? -eq 1 ]]; then
+        echo "ERROR: ffmpeg was not found on your system. exiting."
+        exit 1
+    fi
+fi
+
+oext="${1##*.}"
+next=".mp4"
+newfile="${1%.$oext}.out$next"
+filter="[0:a]showspectrum=s=1280x720:slide=scroll,format=yuv420p[v]"
+vm=""
+
+if [[ $oext == "mp4" || $oext == "webm" ]]
+then
+    vm="-vn"
+fi
+
+$bin -i "$1" $vm -filter_complex "$filter" -map "[v]" -map 0:a "$newfile"
