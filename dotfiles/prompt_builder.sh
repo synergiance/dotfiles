@@ -30,7 +30,8 @@ get_git_status() {
   fi
   repo_path="$(git rev-parse --git-dir 2>/dev/null)"
   branch_name="$(git branch 2>/dev/null | sed -n '/^\*/s/* //p')"
-  readarray -t git_changes <<< $(git status --porcelain --ignore-submodules) #$(
+  git_output="$(git status --porcelain --ignore-submodules)"
+  readarray -t git_changes <<< "${git_output}" #$(
   staged=0
   untracked=0
   unstaged=0
