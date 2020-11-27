@@ -198,10 +198,10 @@ set_fancy_prompt() {
     PS1+='\[\e[36m\]${GEAR} ${num_jobs} '
   fi
   do_fancy_userhost
-  PS1+=' \[\e[0;30;44m\]${SEPARATOR} ${wd} '
   if [ ${wd:0:1} != "/" ] && [ ${wd:0:1} != "~" ] ; then
     wd="... ${wd}"
   fi
+  PS1+=' \[\e[0;30;44m\]${SEPARATOR} ${wd} '
   git_fancy_prompt
   PS1+='\[\e[0m\] '
 }
