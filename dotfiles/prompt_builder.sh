@@ -173,9 +173,6 @@ do_fancy_userhost() {
 
 get_truncated_pwd() {
   wd=$(echo ${PWD/#$HOME/'~'} | grep -Po "(^~(\/[^\/\n]*){0,3}$|^(\/[^\/\n]*){1,3}$|[^\/\n]*(\/[^\/\n]*){2})$")
-  if [ ${wd:0:1} != "/" ] && [ ${wd:0:1} != "~" ] ; then
-    wd="... ${wd}"
-  fi
 }
 
 set_basic_prompt() {
@@ -202,6 +199,9 @@ set_fancy_prompt() {
   fi
   do_fancy_userhost
   PS1+=' \[\e[0;30;44m\]${SEPARATOR} ${wd} '
+  if [ ${wd:0:1} != "/" ] && [ ${wd:0:1} != "~" ] ; then
+    wd="... ${wd}"
+  fi
   git_fancy_prompt
   PS1+='\[\e[0m\] '
 }
