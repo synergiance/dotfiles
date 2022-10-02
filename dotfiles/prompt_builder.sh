@@ -17,6 +17,10 @@ ERROR="✘"
 BOLT="⚡"
 GEAR="⚙"
 
+# Constants
+wd_crop_rgx="(^~(\/[^\/\n]*){0,3}$|^[A-Z0-9]+:(\/[^\/\n]*){0,3}$|^(\/[^\/\n]*){1,3}$|[^\/\n]*(\/[^\/\n]*){2})$"
+wsl_check_rgx="(?<=^\/mnt\/)([A-Za-z0-9]+)(?=$|\/)"
+
 # Git Variables
 staged=0
 unstaged=0
@@ -31,6 +35,7 @@ behind=0
 
 # Prompt Variables
 wd=""
+wsl_prefix=""
 
 last_command=0
 
@@ -171,8 +176,20 @@ do_fancy_userhost() {
   fi
 }
 
+shorten_wsl() {
+  wsl_prefix="$(echo "$wd" | grep -Po "$wsl_check_rgx")" || return
+  wsl_to_replace="/mnt/$wsl_prefix"
+  wsl_replace_with="$(tr '[:lower:]' '[:upper:]' <<<"$wsl_prefix"):"
+  wd=${wd/"$wsl_to_replace"/"$wsl_replace_with"}
+}
+
 get_truncated_pwd() {
-  wd=$(echo ${PWD/#$HOME/'~'} | grep -Po "(^~(\/[^\/\n]*){0,3}$|^(\/[^\/\n]*){1,3}$|[^\/\n]*(\/[^\/\n]*){2})$")
+  wsl_prefix=""
+  wd=$PWD
+  if [ "${WSL_SHORTENING}" == "true" ] ; then
+    shorten_wsl
+  fi
+  wd=$(echo "${wd/#$HOME/'~'}" | grep -Po "$wd_crop_rgx")
 }
 
 set_basic_prompt() {
@@ -198,7 +215,7 @@ set_fancy_prompt() {
     PS1+='\[\e[36m\]${GEAR} ${num_jobs} '
   fi
   do_fancy_userhost
-  if [ ${wd:0:1} != "/" ] && [ ${wd:0:1} != "~" ] ; then
+  if [ "${wd:0:1}" != "/" ] && [ "${wd:0:1}" != "~" ] && [ "$wsl_prefix" == "" ] ; then
     wd="... ${wd}"
   fi
   PS1+=' \[\e[0;30;44m\]${SEPARATOR} ${wd} '
