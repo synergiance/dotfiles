@@ -177,7 +177,7 @@ do_fancy_userhost() {
 }
 
 shorten_wsl() {
-  wsl_prefix="$(echo "$wd" | grep -Po "$wsl_check_rgx")" || return
+  wsl_prefix="$(grep -Po "$wsl_check_rgx" <<<"$wd")" || return
   wsl_base=$(awk -F/ '{print FS $2}' <<<"$wd")
   wsl_to_replace="$wsl_base/$wsl_prefix"
   wsl_replace_with="$(tr '[:lower:]' '[:upper:]' <<<"$wsl_prefix"):"
@@ -190,7 +190,7 @@ get_truncated_pwd() {
   if [ "${WSL_SHORTENING}" == "true" ] ; then
     shorten_wsl
   fi
-  wd=$(echo "${wd/#$HOME/'~'}" | grep -Po "$wd_crop_rgx")
+  wd=$(grep -Po "$wd_crop_rgx" <<<"${wd/#$HOME/'~'}")
 }
 
 set_basic_prompt() {
