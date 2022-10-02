@@ -178,7 +178,8 @@ do_fancy_userhost() {
 
 shorten_wsl() {
   wsl_prefix="$(echo "$wd" | grep -Po "$wsl_check_rgx")" || return
-  wsl_to_replace="/mnt/$wsl_prefix"
+  wsl_base=$(awk -F/ '{print FS $2}' <<<"$wd")
+  wsl_to_replace="$wsl_base/$wsl_prefix"
   wsl_replace_with="$(tr '[:lower:]' '[:upper:]' <<<"$wsl_prefix"):"
   wd=${wd/"$wsl_to_replace"/"$wsl_replace_with"}
 }
