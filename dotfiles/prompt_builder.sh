@@ -45,7 +45,7 @@ get_git_status() {
   if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]] ; then
     return 0
   fi
-  repo_path="$(git rev-parse --git-dir 2>/dev/null)"
+  repo_path="$(git rev-parse --show-toplevel 2>/dev/null)"
   branch_name="$(git branch 2>/dev/null | sed -n '/^\*/s/* //p')"
   commit_tag=$(echo "$branch_name" | grep -Po "(?<=\(HEAD detached at )[a-fA-F0-9]+(?=\))")
   if [[ $? -eq 0 ]] ; then
