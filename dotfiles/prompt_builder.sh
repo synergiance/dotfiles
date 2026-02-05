@@ -57,7 +57,7 @@ get_git_status() {
   git_output=$(git status --porcelain=v2 --branch)
   staged=$(echo "$git_output" | grep -c -P "^[12] [MARCD]")
   unstaged=$(echo "$git_output" | grep -c -P "^[12] .[MARCD]")
-  untracked=$(echo "$git_output" | grep -c "^\?")
+  untracked=$(echo "$git_output" | grep -c -P "^\?")
   ignored=$(echo "$git_output" | grep -c "^!")
   tmpabstr=$(echo "$git_output" | grep "^# branch.ab")
   if [ "$tmpabstr" != "" ] ; then
