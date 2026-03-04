@@ -4,6 +4,7 @@
 RESET_COLOR="\033[0m"
 GREEN="\033[01;32m"
 BLUE="\033[01;34m"
+YELLOW="\033[\01;33m"
 SEPARATOR=""
 STAGED="✚"
 UNSTAGED="±"
@@ -36,6 +37,8 @@ behind=0
 # Prompt Variables
 wd=""
 wsl_prefix=""
+ssh_session="false"
+hostname_hidden="false"
 
 last_command=0
 
@@ -159,20 +162,58 @@ git_fancy_prompt() {
   fi
 }
 
-do_basic_userhost() {
-  if [ "$USER" != "root" ] ; then
-    PS1+='\[\e[01;32m\]\u@'
-  else
-    PS1+='\[\e[01;33m\]'
+detect_ssh() {
+  if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] ; then
+    ssh_session="true"
+  elif [[ $(pstree -s $$) = *sshd* ]] ; then
+    ssh_session="true"
   fi
-  PS1+='\h\[\e[0m\]'
+
+  if [ "$HIDE_HOSTNAME" == "true" ] && [ "$ssh_session" != "true" ] ; then
+    hostname_hidden="true"
+  fi
+}
+
+do_basic_userhost() {
+  userhost=""
+  userhost_col='\[\e[01;32m\]'
+  if [ "$USER" == "root" ] ; then
+    userhost_col='\[\e[01;33m\]'
+    if [ "$hostname_hidden" == "true" ] ; then
+      userhost+='#'
+    fi
+  elif [ "$USER" != "$HIDE_USERNAME" ] ; then
+    userhost+='\[\e[01;32m\]\u'
+  fi
+  if [ "$hostname_hidden" != "true" ] ; then
+    if [ "$userhost" != "" ] ; then
+      userhost+='@'
+    fi
+    userhost+='\h'
+  fi
+  if [ $userhost != "" ] ; then
+    PS1+=$userhost_col
+    PS1+=$userhost
+    PS1+='\[\e[0m\]:'
+  fi
 }
 
 do_fancy_userhost() {
   if [ "$USER" == "root" ] ; then
-    PS1+='\[\e[33m\]${BOLT} \h'
-  else
-    PS1+='\[\e[32m\]\u@\h'
+    needs_separator=true
+    PS1+=' \[\e[33m\]${BOLT}'
+    if [ "$hostname_hidden" != "true" ] ; then
+      PS1+=' \h'
+    fi
+  elif [ "$USER" != "$HIDE_USERNAME" ] ; then
+    needs_separator=true
+    PS1+=' \[\e[32m\]\u'
+    if [ "$hostname_hidden" != "true" ] ; then
+      PS1+='@\h'
+    fi
+  elif [ "$hostname_hidden" != "true" ] ; then
+    needs_separator=true
+    PS1+=' \[\e[32m\]\h'
   fi
 }
 
@@ -200,32 +241,40 @@ set_basic_prompt() {
     PS1+='${last_command}:'
   fi
   do_basic_userhost
-  PS1+=':\[\e[01;34m\]${wd}'
+  PS1+='\[\e[01;34m\]${wd}'
   git_basic_prompt
   PS1+='\[\e[0m\]> '
 }
 
 set_fancy_prompt() {
   PS1=""
-  PS1+='\[\e[0m\]\[\e[01;40m\] '
+  PS1+='\[\e[0m\]\[\e[01;40m\]'
+  needs_separator=false
   if [ $last_command -ne 0 ] ; then
-    PS1+='\[\e[31m\]${ERROR} ${last_command} '
+    PS1+=' \[\e[31m\]${ERROR} ${last_command}'
+    needs_separator=true
   fi
   num_jobs=$(jobs -l | wc -l 2>/dev/null)
   if [ $num_jobs -gt 0 ] ; then
-    PS1+='\[\e[36m\]${GEAR} ${num_jobs} '
+    PS1+=' \[\e[36m\]${GEAR} ${num_jobs}'
+    needs_separator=true
   fi
   do_fancy_userhost
   if [ "${wd:0:1}" != "/" ] && [ "${wd:0:1}" != "~" ] && [ "$wsl_prefix" == "" ] ; then
     wd="... ${wd}"
   fi
-  PS1+=' \[\e[0;30;44m\]${SEPARATOR} ${wd} '
+  if [ "${needs_separator}" == "true" ] ; then
+    PS1+=' \[\e[0;30;44m\]${SEPARATOR} ${wd} '
+  else
+    PS1+='\[\e[0;30;44m\] ${wd} '
+  fi
   git_fancy_prompt
   PS1+='\[\e[0m\] '
 }
 
 set_prompt() {
   last_command=$? # Stash return value
+  detect_ssh
   get_truncated_pwd
   if [ "${USE_FANCY_PROMPT}" == "true" ] ; then
     set_fancy_prompt
