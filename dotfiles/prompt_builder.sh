@@ -191,7 +191,7 @@ do_basic_userhost() {
     fi
     userhost+='\h'
   fi
-  if [ $userhost != "" ] ; then
+  if [ "$userhost" != "" ] ; then
     PS1+=$userhost_col
     PS1+=$userhost
     PS1+='\[\e[0m\]:'
