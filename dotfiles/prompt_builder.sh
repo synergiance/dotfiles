@@ -1,10 +1,10 @@
 # Bash PS1 builder
 
 # Settings
-RESET_COLOR="\033[0m"
-GREEN="\033[01;32m"
-BLUE="\033[01;34m"
-YELLOW="\033[\01;33m"
+RESET_COLOR="\[\033[0m\]"
+GREEN="\[\033[01;32m\]"
+BLUE="\[\033[01;34m\]"
+YELLOW="\[\033[\01;33m\]"
 SEPARATOR=""
 STAGED="✚"
 UNSTAGED="±"
